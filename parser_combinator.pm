@@ -36,7 +36,7 @@ sub EOS {
     sub {
         my ($rules, $input, $pos) = @_;
 
-        if ($pos == length $$input) {
+        if ($pos == length $input) {
             return { pos => $pos }
         }
         else {
@@ -52,7 +52,7 @@ sub any {
     sub {
         my ($rules, $input, $pos) = @_;
 
-        if ($pos >= length $$input) {
+        if ($pos >= length $input) {
             return { pos => undef }
         }
         else {
@@ -68,10 +68,10 @@ sub char {
     sub {
         my ($rules, $input, $pos) = @_;
 
-        if ($pos >= length $$input) {
+        if ($pos >= length $input) {
             return { pos => undef }
         }
-        elsif (substr($$input, $pos, 1) eq $char) {
+        elsif (substr($input, $pos, 1) eq $char) {
             return { pos => $pos + 1 }
         }
         else {
@@ -87,10 +87,10 @@ sub string {
     sub {
         my ($rules, $input, $pos) = @_;
 
-        if ($pos >= length $$input) {
+        if ($pos >= length $input) {
             return { pos => undef }
         }
-        elsif (substr($$input, $pos, length $string) eq $string) {
+        elsif (substr($input, $pos, length $string) eq $string) {
             return { pos => $pos + length $string }
         }
         else {
@@ -106,7 +106,7 @@ sub ws_plus {
     sub {
         my ($rules, $input, $pos) = @_;
 
-        if (substr($$input, $pos) =~ /^\s+/) {
+        if (substr($input, $pos) =~ /^\s+/) {
             return { pos => $pos + length $& }
         }
         else {
@@ -121,7 +121,7 @@ sub ws_star {
     sub {
         my ($rules, $input, $pos) = @_;
 
-        if (substr($$input, $pos) =~ /^\s*/) {
+        if (substr($input, $pos) =~ /^\s*/) {
             return { pos => $pos + length $& }
         }
         else {
@@ -139,7 +139,7 @@ sub regex {
     sub {
         my ($rules, $input, $pos) = @_;
 
-        if (substr($$input, $pos) =~ $regex) {
+        if (substr($input, $pos) =~ $regex) {
             return { pos => $pos + length $& }
         }
         else {
@@ -159,7 +159,7 @@ sub capture {
         if (defined $match->{pos}) {
             my @cap;
             push @cap, $match->{cap}->@* if exists $match->{cap};
-            push @cap, substr($$input, $start, $match->{pos} - $start);
+            push @cap, substr($input, $start, $match->{pos} - $start);
 
             return { pos => $match->{pos}, cap => \@cap };
         }
@@ -345,7 +345,7 @@ sub parser {
 
     sub {
         my $input = shift;
-        my $match = $rules{top}{rule}->(\%rules, \$input, 0);
+        my $match = $rules{top}{rule}->(\%rules, $input, 0);
 
         if (!defined $match->{pos}) {
             return undef
@@ -362,5 +362,3 @@ sub parser {
 
 
 1;
-
-
